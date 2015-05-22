@@ -1,6 +1,6 @@
 class BaseClass
 
-  attr_accessor :ability_scores
+  attr_accessor :ability_scores, :base_attack_bonuses
   attr_reader :race, :level, :hit_points
 
   UNIVERSAL_FIRST_TIER_SKILLS = [:spot, :move_silently]
@@ -10,6 +10,7 @@ class BaseClass
     @race = race
     @level = level
     @ability_scores = {}
+    @base_attack_bonuses = []
     set_up_character
   end
 
@@ -18,8 +19,8 @@ class BaseClass
     assign_feats
     choose_skills
     set_hit_points
+    set_base_attack_bonuses
     # buy_equipment
-    # set_base_attack_bonus
     # set_saves
   end
 
@@ -29,7 +30,8 @@ class BaseClass
 \033[1;32mClass:\033[0m #{self.class}
 \033[1;32mRace:\033[0m #{race}
 \033[1;32mAbility Scores:\033[0m
-#{list_ability_scores}\033[1;32mHit points:\033[0m #{hit_points}
+#{list_ability_scores}\033[1;32mHit Points:\033[0m #{hit_points}
+\033[1;32mBase Attack Bonuses:\033[0m #{base_attack_bonuses.join(" / ")}
 STRING
   end
 
@@ -151,5 +153,9 @@ STRING
 
   def number_of_skill_points
     (self.class::SKILL_BASE + ability_mods[:int]) * (3 + level)
+  end
+
+  def set_base_attack_bonuses
+    self.base_attack_bonuses = self.class::BASE_ATTACK_BONUSES[level-1]
   end
 end

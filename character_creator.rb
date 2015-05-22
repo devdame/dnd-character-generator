@@ -36,8 +36,4 @@ class CharacterCreator
     @race ||= RACES.sample
   end
 
-  # ADD BACKGROUND STORY
-  # mobile friendly
-  # add ability to print it out as a character sheet
-
 end
