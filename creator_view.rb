@@ -89,4 +89,8 @@ STRING
   def invalid_repeat
     puts "You haven't made a character yet, so I don't have anything to repeat!  Make one and come back to me."
   end
+
+  def level_limitations
+    puts "We currently don't have support for epic level characters.  Please choose a level between one and twenty."
+  end
 end

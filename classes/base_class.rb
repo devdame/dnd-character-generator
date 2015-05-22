@@ -125,7 +125,8 @@ STRING
   end
 
   def assign_feats
-    #
+    # First, figure out how many feats the character is getting
+    # Then, establish what feats the character can take based off of prerequisites
   end
 
   def set_hit_points

@@ -72,6 +72,10 @@ class CreatorController
     view.ask_for_input
     character_info[:level] = gets.chomp.to_i
     set_level unless character_info[:level] > 0
+    if character_info[:level] > 20
+      view.level_limitations
+      set_level
+    end
   end
 
   def set_race
