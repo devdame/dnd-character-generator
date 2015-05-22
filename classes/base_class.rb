@@ -92,12 +92,28 @@ STRING
   end
 
   def adjust_for_level
-    # adjust this to make it a bit smarter!
-    # if it's the last point to add and it won't bump the highest modifier, then add it to the highest one it can bump.  if it can't bump any, add to the highest.
-    highest_key = ability_scores.keys[0]
-    (level/4).times do
-      self.ability_scores[highest_key] += 1
-    end
+    sorted_ability_scores = ability_scores.sort_by {|k, v| v}
+    level_adjustments = level/4
+
+    # all adjustments for level will add to the highest ability score except for the last one which is a special condition.
+
+    (level_adjustments - 1).times { increase_score(sorted_ability_scores.last.first) }
+
+    bump_score_that_matters(sorted_ability_scores)
+  end
+
+  def bump_score_that_matters(sorted_ability_scores)
+    # if the last adjustment won't bump up the modifier for the highest ability score, add it to the next highest ability score whose modifier WILL get bumped up from the ability score increase.
+    # modifiers bump up when the ability score hits the next even number
+    # if it can't bump any modifiers, just add it to the highest ability score.
+
+    odd_scores = sorted_ability_scores.select{|pair| pair[1] % 2 == 1}
+    score_to_increase = odd_scores.any? ? odd_scores.last.first : sorted_ability_scores.last.first
+    increase_score(score_to_increase)
+  end
+
+  def increase_score(score_name)
+    ability_scores[score_name] += 1
   end
 
   def number_of_feats
