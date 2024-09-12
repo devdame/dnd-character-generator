@@ -47,12 +47,12 @@ STRING
 
   def list_ability_scores
 <<-STRING
-  \033[1;35mSTR:\033[0m #{ability_scores[:str]}
-  \033[1;35mCON:\033[0m #{ability_scores[:con]}
-  \033[1;35mDEX:\033[0m #{ability_scores[:dex]}
-  \033[1;35mINT:\033[0m #{ability_scores[:int]}
-  \033[1;35mWIS:\033[0m #{ability_scores[:wis]}
-  \033[1;35mCHA:\033[0m #{ability_scores[:cha]}
+  \033[1;35mSTR:\033[0m #{ability_scores[:str]} (#{ability_modifier_string(:str)})
+  \033[1;35mCON:\033[0m #{ability_scores[:con]} (#{ability_modifier_string(:con)})
+  \033[1;35mDEX:\033[0m #{ability_scores[:dex]} (#{ability_modifier_string(:dex)})
+  \033[1;35mINT:\033[0m #{ability_scores[:int]} (#{ability_modifier_string(:int)})
+  \033[1;35mWIS:\033[0m #{ability_scores[:wis]} (#{ability_modifier_string(:wis)})
+  \033[1;35mCHA:\033[0m #{ability_scores[:cha]} (#{ability_modifier_string(:cha)})
 STRING
   end
 
@@ -119,12 +119,15 @@ STRING
   end
 
   def adjust_for_level
+    # TODO: instead of sorting ability scores by value, which might give us an incorrect idea of ability importance once we've applied racial bonuses, we should use the class constants to determine ability priority order.
     sorted_ability_scores = ability_scores.sort_by {|k, v| v}
     level_adjustments = level/4
 
-    # all adjustments for level will add to the highest ability score except for the last one which is a special condition.
+    # all adjustments for level will add to the primary ability score except for the last one which is a special condition.
 
-    (level_adjustments - 1).times { increase_score(sorted_ability_scores.last.first) }
+    (level_adjustments - 1).times { increase_score(primary_ability) }
+
+    # TODO: this should only do this _if_ they had at least one adjustment to make
 
     bump_score_that_matters(sorted_ability_scores)
   end

@@ -35,5 +35,5 @@ class CharacterCreator
   def race
     @race ||= RACES.sample
   end
-
 end
+
