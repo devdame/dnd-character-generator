@@ -131,7 +131,8 @@ class CreatorController
   end
 
   def class_hash
-    {"barbarian" => Barbarian,
+    {
+      "barbarian" => Barbarian,
       "bard" => Bard,
       "cleric" => Cleric,
       "druid" => Druid,
@@ -141,7 +142,8 @@ class CreatorController
       "ranger" => Ranger,
       "rogue" => Rogue,
       "sorceror" => Sorceror,
-      "wizard" => Wizard}
+      "wizard" => Wizard,
+    }
   end
 
   def make_character

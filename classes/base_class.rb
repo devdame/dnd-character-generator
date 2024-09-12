@@ -1,16 +1,21 @@
 class BaseClass
 
-  attr_accessor :ability_scores, :base_attack_bonuses
+  attr_accessor :ability_scores, :base_attack_bonuses, :saves
   attr_reader :race, :level, :hit_points
 
   UNIVERSAL_FIRST_TIER_SKILLS = [:spot, :move_silently]
   UNIVERSAL_SECOND_TIER_SKILLS = [:use_rope]
+
+  BASIC_SAVE_PROGRESSION = [0, 0, 1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5, 6, 6, 6]
+  PREFERRED_SAVE_PROGRESSION = [2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10, 10, 11, 11, 12]
 
   def initialize(race, level)
     @race = race
     @level = level
     @ability_scores = {}
     @base_attack_bonuses = []
+    @saves = {}
+
     set_up_character
   end
 
@@ -20,8 +25,8 @@ class BaseClass
     choose_skills
     set_hit_points
     set_base_attack_bonuses
+    set_saves
     # buy_equipment
-    # set_saves
   end
 
   def to_s
@@ -32,6 +37,9 @@ class BaseClass
 \033[1;32mAbility Scores:\033[0m
 #{list_ability_scores}\033[1;32mHit Points:\033[0m #{hit_points}
 \033[1;32mBase Attack Bonuses:\033[0m #{base_attack_bonuses.join(" / ")}
+\033[1;32mSaves:\033[0m
+#{list_saves}
+
 STRING
   end
 
@@ -46,6 +54,23 @@ STRING
   \033[1;35mWIS:\033[0m #{ability_scores[:wis]}
   \033[1;35mCHA:\033[0m #{ability_scores[:cha]}
 STRING
+  end
+
+  def list_saves
+<<-STRING
+  \033[1;35mFORTITUDE:\033[0m +#{saves[:fortitude]}
+  \033[1;35mREFLEX:\033[0m +#{saves[:reflex]}
+  \033[1;35mWILL:\033[0m +#{saves[:will]}
+STRING
+  end
+
+  def primary_ability
+    self.class::FIRST_TIER_ABILITIES.first
+  end
+
+  def ability_modifier_string(ability)
+    modifier = ability_mods[ability]
+    modifier < 0 ? modifier.to_s : "+#{modifier}"
   end
 
   def raw_ability_scores
@@ -158,5 +183,19 @@ STRING
 
   def set_base_attack_bonuses
     self.base_attack_bonuses = self.class::BASE_ATTACK_BONUSES[level-1]
+  end
+
+  def save_progression(save)
+    if self.class::PREFERRED_SAVES.include? save
+      PREFERRED_SAVE_PROGRESSION
+    else
+      BASIC_SAVE_PROGRESSION
+    end
+  end
+
+  def set_saves
+    self.saves[:fortitude] = save_progression(:fortitude)[level-1] + ability_mods[:con]
+    self.saves[:reflex] = save_progression(:reflex)[level-1] + ability_mods[:dex]
+    self.saves[:will] = save_progression(:will)[level-1] + ability_mods[:wis]
   end
 end
