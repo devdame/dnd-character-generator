@@ -1,5 +1,6 @@
-class BaseClass
+require_relative "../name_generator"
 
+class BaseClass
   attr_accessor :ability_scores, :base_attack_bonuses, :saves
   attr_reader :race, :level, :hit_points
 
@@ -31,6 +32,7 @@ class BaseClass
 
   def to_s
 <<-STRING
+\033[1;32mName:\033[0m #{name}
 \033[1;32mLevel:\033[0m #{level}
 \033[1;32mClass:\033[0m #{self.class}
 \033[1;32mRace:\033[0m #{race}
@@ -39,7 +41,6 @@ class BaseClass
 \033[1;32mBase Attack Bonuses:\033[0m #{base_attack_bonuses.join(" / ")}
 \033[1;32mSaves:\033[0m
 #{list_saves}
-
 STRING
   end
 
@@ -163,6 +164,10 @@ STRING
       points += (rand(2..self.class::HIT_DIE) + ability_mods[:con])
     end
     @hit_points = points
+  end
+
+  def name
+    @name ||= NameGenerator.generate_name
   end
 
   def ability_mods

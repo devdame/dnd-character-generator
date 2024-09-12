@@ -32,16 +32,16 @@ STRING
   end
 
   def ask_to_choose_race
-    puts "Would you like to specify the race?  Enter 'yes'/'y'/'no'/'n'."
+    puts "Would you like to specify the race? Enter 'yes'/'y'/'no'/'n'."
   end
 
   def ask_to_choose_class
-    puts "Would you like to specify the class?  Enter 'yes'/'y'/'no'/'n'."
+    puts "Would you like to specify the class? Enter 'yes'/'y'/'no'/'n'."
   end
 
   def ask_for_race
     puts <<-STRING
-Please enter the race name.  Your choices are:
+Please enter the race name. Your choices are:
 - human
 - halfling
 - gnome
@@ -54,7 +54,7 @@ STRING
 
   def ask_for_class
     puts <<-STRING
-Please enter the class name.  Your choices are:
+Please enter the class name. Your choices are:
 - barbarian
 - bard
 - cleric
@@ -78,7 +78,9 @@ STRING
   end
 
   def show_new_character
+    puts
     puts "\033[1;36mYOUR NEW CHARACTER:\033[0m"
+    puts
     puts party.members.last
   end
 
