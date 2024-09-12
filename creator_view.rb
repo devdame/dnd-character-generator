@@ -64,7 +64,7 @@ Please enter the class name. Your choices are:
 - paladin
 - ranger
 - rogue
-- sorceror
+- sorcerer
 - wizard
 STRING
   end

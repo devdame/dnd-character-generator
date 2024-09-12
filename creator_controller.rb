@@ -127,7 +127,7 @@ class CreatorController
   end
 
   def valid_class
-    ["barbarian","bard","cleric","druid","fighter","monk","paladin","ranger","rogue","sorceror","wizard"].include?(character_info[:klass])
+    ["barbarian","bard","cleric","druid","fighter","monk","paladin","ranger","rogue","sorcerer","wizard"].include?(character_info[:klass])
   end
 
   def class_hash
@@ -141,7 +141,7 @@ class CreatorController
       "paladin" => Paladin,
       "ranger" => Ranger,
       "rogue" => Rogue,
-      "sorceror" => Sorceror,
+      "sorcerer" => Sorcerer,
       "wizard" => Wizard,
     }
   end
