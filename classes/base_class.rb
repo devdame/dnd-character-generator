@@ -1,7 +1,8 @@
 require_relative "../name_generator"
+require_relative "../skill_manager"
 
 class BaseClass
-  attr_accessor :ability_scores, :base_attack_bonuses, :saves
+  attr_accessor :ability_scores, :ability_mods, :base_attack_bonuses, :saves, :skill_manager
   attr_reader :race, :level, :hit_points
 
   UNIVERSAL_FIRST_TIER_SKILLS = [:spot, :move_silently]
@@ -14,6 +15,7 @@ class BaseClass
     @race = race
     @level = level
     @ability_scores = {}
+    @ability_mods = {}
     @base_attack_bonuses = []
     @saves = {}
 
@@ -23,7 +25,7 @@ class BaseClass
   def set_up_character
     assign_ability_scores
     assign_feats
-    choose_skills
+    assign_skills
     set_hit_points
     set_base_attack_bonuses
     set_saves
@@ -96,6 +98,7 @@ STRING
     end
     adjust_for_race
     adjust_for_level
+    set_ability_mods!
   end
 
   def adjust_for_race
@@ -170,23 +173,23 @@ STRING
     @name ||= NameGenerator.generate_name
   end
 
-  def ability_mods
-    @ability_mods ||= ability_scores.each_pair.each_with_object({}) do |(ability, score), mod_hash|
+  def set_ability_mods!
+    self.ability_mods = ability_scores.each_pair.each_with_object({}) do |(ability, score), mod_hash|
       relative_score = score - 10
       mod_hash[ability] = relative_score / 2
     end
   end
 
-  def choose_skills
+  def assign_skills
+    self.skill_manager = SkillManager.new(self)
+    skill_manager.assign_skills!
+
+
     # figure out which skills are important for the character
     # also figure out a ratio in which to assign those skills
     # but you also want to randomize it a bit.
     # maybe break the skills into tiers, assign a number of skill points to each tier, then randomly divvy up and assign the skill points within each tier?
     # don't forget base skills that apply to all classes
-  end
-
-  def number_of_skill_points
-    (self.class::SKILL_BASE + ability_mods[:int]) * (3 + level)
   end
 
   def set_base_attack_bonuses
