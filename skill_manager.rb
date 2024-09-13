@@ -1,6 +1,6 @@
 class SkillManager
-  attr_reader :character, :starting_skill_points
-  attr_accessor :available_skill_points
+  attr_reader :character, :starting_skill_points, :max_ranks
+  attr_accessor :available_skill_points, :skill_ranks
 
   ALL_SKILLS = {
     appraise: :int,
@@ -52,12 +52,58 @@ class SkillManager
     @character = character
     @skill_ranks = ALL_SKILLS.keys.product([0]).to_h
     @starting_skill_points = calculate_skill_points
-    @available_skill_points = starting_skill_points
+    @available_skill_points = calculate_skill_points
+    @max_ranks = character.level + 3
   end
 
   def assign_skills!
+    assign_must_have_skills
+    puts "remaining skill points: #{available_skill_points}"
+    assign_nice_to_have_skills
+    # binding.pry
+    puts self.inspect
+
+    # This isn't working right yet--just saw a druid at this point with -1 available skill points. But it's a start!
+
     # TODO: add configuration class that lets you disable skills
     # TODO: make special case for intimidate where whichever is higher between cha or str is used as the modifier
+  end
+
+  def assign_must_have_skills
+    must_haves = character.class::MUST_HAVE_SKILLS
+    max_ranks.times do
+      if available_skill_points > must_haves.count
+        must_haves.each do |skill|
+          add_ranks(skill, 1)
+        end
+      end
+    end
+  end
+
+  def assign_nice_to_have_skills
+    return unless available_skill_points > 0
+
+    nice_to_haves = character.class::NICE_TO_HAVE_SKILLS
+    max_possible_nice_to_have_ranks = nice_to_haves.count * max_ranks
+
+    allotted_skill_points = if max_possible_nice_to_have_ranks < (available_skill_points / 2)
+      max_possible_nice_to_have_ranks
+    else
+      rand((max_possible_nice_to_have_ranks / 2)..max_possible_nice_to_have_ranks)
+    end
+
+    until allotted_skill_points == 0
+      skill = nice_to_haves.sample
+      if skill_ranks[skill] < max_ranks
+        add_ranks(skill, 1)
+        allotted_skill_points -= 1
+      end
+    end
+  end
+
+  def add_ranks(skill, num)
+    skill_ranks[skill] += 1
+    self.available_skill_points -= 1
   end
 
   def calculate_skill_points
